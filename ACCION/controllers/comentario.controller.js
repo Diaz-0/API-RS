@@ -5,10 +5,16 @@ class ComentarioController {
     const { contenido, idperfil, idPublicacion } = req.body;
 
     try {
-      const result = await db.query("INSERT INTO Comentario SET ?", { contenido, idperfil, idPublicacion });
+      // Insertar el nuevo comentario
+      const resultComentario = await db.query("INSERT INTO Comentario SET ?", { contenido, idperfil, idPublicacion });
+      
+      const idComentario = resultComentario[0].insertId;
+
+      // Relacionar el comentario con la publicación
+      await db.query("INSERT INTO publicacion_comentarios SET ?", { idPublicacion, idComentario });
 
       res.json({
-        idcomentario: result[0].insertId,
+        idcomentario: idComentario,
         contenido,
         fecha_creac: new Date(),
         idperfil,
@@ -24,7 +30,13 @@ class ComentarioController {
     const idPublicacion = req.params.idPublicacion;
 
     try {
-      const comentarios = await db.query("SELECT * FROM Comentario WHERE idPublicacion = ?", [idPublicacion]);
+      // Obtener los comentarios asociados con la publicación
+      const comentarios = await db.query(`
+        SELECT c.*
+        FROM Comentario c
+        INNER JOIN publicacion_comentarios pc ON c.idComentario = pc.idComentario
+        WHERE pc.idPublicacion = ?
+      `, [idPublicacion]);
 
       res.json(comentarios[0]);
     } catch (error) {

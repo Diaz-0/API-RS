@@ -16,4 +16,4 @@ const ComentarioSchema = {
     },
 };
 
-module.exports = ComentarioSchema;  
+module.exports = ComentarioSchema;

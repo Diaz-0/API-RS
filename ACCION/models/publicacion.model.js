@@ -12,8 +12,11 @@ const PublicacionSchema = {
     default: () => new Date(),
   },
   idperfil: {
-    type: INT,  // Asegúrate de definir correctamente el tipo de dato correcto para INT (puede ser Number o algo similar)
+    type: INT,  
     required: true,
+  },
+  idcomentario: {
+    type: INT,
   },
 };
 
