@@ -57,6 +57,34 @@ class UserController {
       res.status(500).json({ error: "Error al iniciar sesión" });
     }
   }
+  async getUserById(req, res) {
+    try {
+      const userId = req.params.id; // Obtener el ID del parámetro de la URL
+
+      const query = "SELECT * FROM Usuario WHERE idUsuario = ?";
+      const [user] = await db.query(query, [userId]);
+
+      if (user.length === 0) {
+        return res.status(404).json({ error: "Usuario no encontrado" });
+      }
+
+      res.json(user[0]);
+    } catch (error) {
+      console.error("Error al obtener el usuario por ID:", error);
+      res.status(500).json({ error: "Error al obtener el usuario por ID" });
+    }
+  }
+  async getAllUsers(req, res) {
+    try {
+      const query = "SELECT * FROM Usuario";
+      const [users] = await db.query(query);
+
+      res.json(users);
+    } catch (error) {
+      console.error("Error al obtener todos los usuarios:", error);
+      res.status(500).json({ error: "Error al obtener todos los usuarios" });
+    }
+  }
 }
 
 module.exports = new UserController();
